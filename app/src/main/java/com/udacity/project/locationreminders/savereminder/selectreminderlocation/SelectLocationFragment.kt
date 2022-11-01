@@ -13,6 +13,8 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -20,6 +22,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.udacity.project.R
 import com.udacity.project.base.BaseFragment
@@ -42,6 +45,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
     private var mMap: GoogleMap? = null
+    private var marker: Marker? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -55,26 +59,26 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
+        //    add the map setup implementation
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-//        TODO: add the map setup implementation
-//        TODO: zoom to the user location after taking his permission
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
-
-
-//        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
+        binding.saveLocationButton.setOnClickListener {
+            onLocationSelected()
+        }
 
         return binding.root
     }
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+        marker?.let {
+            _viewModel.reminderSelectedLocationStr.value = it.title
+            _viewModel.latitude.value = it.position.latitude
+            _viewModel.longitude.value = it.position.longitude
+        }
+
+        findNavController().popBackStack()
     }
 
 
@@ -105,6 +109,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap
+        //    zoom to the user location after taking his permission
         var home = LatLng(37.421982, -122.085109)
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(home,INITIAL_ZOOM ))
 
@@ -119,6 +124,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     }
 
+    //   add style to the map
     private fun setMapStyle(mMap: GoogleMap?) {
         mMap?.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
@@ -159,6 +165,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
      *
      * @param map The GoogleMap to attach the listener to.
      */
+    // put a marker to location that the user selected
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poi ->
             val poiMarker = map.addMarker(
