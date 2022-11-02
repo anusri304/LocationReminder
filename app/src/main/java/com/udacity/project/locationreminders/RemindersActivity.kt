@@ -5,7 +5,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.udacity.project.R
-import kotlinx.android.synthetic.main.activity_reminders.*
+import kotlinx.android.synthetic.main.activity_reminders.nav_host_fragment
 
 /**
  * The RemindersActivity that holds the reminders fragments

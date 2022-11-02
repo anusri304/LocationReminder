@@ -9,7 +9,11 @@ import com.udacity.project.locationreminders.data.dto.ReminderDTO
 import com.udacity.project.locationreminders.data.dto.Result
 import com.udacity.project.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project.utils.sendNotification
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import kotlin.coroutines.CoroutineContext
 
