@@ -27,6 +27,7 @@ import com.udacity.project.base.BaseFragment
 import com.udacity.project.base.NavigationCommand
 import com.udacity.project.databinding.FragmentSaveReminderBinding
 import com.udacity.project.locationreminders.geofence.GeofenceBroadcastReceiver
+import com.udacity.project.locationreminders.geofence.GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
 import com.udacity.project.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
@@ -45,8 +46,6 @@ class SaveReminderFragment : BaseFragment() {
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
         intent.action = GeofenceBroadcastReceiver.ACTION_GEOFENCE_EVENT
-        // Use FLAG_UPDATE_CURRENT so that you get the same pending intent back when calling
-        // addGeofences() and removeGeofences().
         PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
@@ -56,7 +55,6 @@ class SaveReminderFragment : BaseFragment() {
         private const val LOCATION_PERMISSION_INDEX = 0
         private const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
         private const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
-        const val GEOFENCE_RADIUS_IN_METERS = 100f
         private const val TAG = "SaveReminderFragment"
     }
 
@@ -99,9 +97,6 @@ class SaveReminderFragment : BaseFragment() {
                 checkPermissionsAndStartGeofencing()
             }
 
-//            TODO: use the user entered reminder details to:
-//             1) add a geofencing request
-//             2) save the reminder to the local db
         }
     }
 
@@ -159,7 +154,8 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         Log.d(TAG, "Request foreground only location permission")
-        requestPermissions(
+        ActivityCompat.requestPermissions(
+            requireActivity(),
             permissionsArray,
             resultCode
         )
@@ -225,7 +221,6 @@ class SaveReminderFragment : BaseFragment() {
             }
         }
     }
-
     private fun addGeofenceArea() {
         val geofence = Geofence.Builder()
             .setRequestId(reminderDataItem.id)

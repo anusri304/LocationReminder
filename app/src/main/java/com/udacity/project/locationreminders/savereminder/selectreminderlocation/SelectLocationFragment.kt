@@ -109,7 +109,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap
         //    zoom to the user location after taking his permission
-        var home = LatLng(37.421982, -122.085109)
+        var home = LatLng(-29.890790,30.929810)
+
+//        -29.796793039204914
+//
+//        30.839524269104004
         mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(home,INITIAL_ZOOM ))
 
         mMap?.let { setMapLongClick(it) } // Set a long click listener for the map;
