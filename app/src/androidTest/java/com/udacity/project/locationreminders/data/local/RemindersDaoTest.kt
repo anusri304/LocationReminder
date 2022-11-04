@@ -45,11 +45,9 @@ class RemindersDaoTest {
 
 
     @Test
-    fun testInsertReminderandGetReminders() = runBlockingTest {
-
-
+     fun testInsertReminderandGetReminders() = runBlockingTest{
         val reminderDto = createFakeReminder()
-       database.reminderDao().saveReminder(createFakeReminder())
+       database.reminderDao().saveReminder(reminderDto)
 
         val loadedReminderList = database.reminderDao().getReminders()
 
@@ -62,7 +60,6 @@ class RemindersDaoTest {
         MatcherAssert.assertThat(loadedReminder.latitude, `is`(reminderDto.latitude))
         MatcherAssert.assertThat(loadedReminder.longitude, `is`(reminderDto.longitude))
         MatcherAssert.assertThat(loadedReminder.longitude, `is`(reminderDto.longitude))
-
     }
 
 
@@ -73,6 +70,5 @@ class RemindersDaoTest {
             "location abc",
             102.00,
             109.00)
-
     }
 }

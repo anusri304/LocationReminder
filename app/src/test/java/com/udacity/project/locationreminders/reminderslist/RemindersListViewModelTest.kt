@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project.locationreminders.data.FakeDataSource
 import com.udacity.project.locationreminders.data.dto.ReminderDTO
-import com.udacity.project4.locationreminders.rule.MainCoroutineRule
+import com.udacity.project.locationreminders.rule.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
