@@ -36,7 +36,7 @@ class RemindersListViewModelTest: AutoCloseKoinTest() {
     }
 
     @Test
-    fun testShouldReturnError () = runBlockingTest  {
+    fun testSnackBar_display_NoReminders () = runBlockingTest  {
         fakeReminderDataSource.setReturnError(true)
         saveReminderData()
         remindersViewModel.loadReminders()
@@ -47,7 +47,7 @@ class RemindersListViewModelTest: AutoCloseKoinTest() {
     }
 
     @Test
-    fun check_loading() = runBlockingTest {
+    fun testLoading_ShowHide () = runBlockingTest {
         // Pause dispatcher so we can verify initial values
         mainCoroutineRule.pauseDispatcher()
 

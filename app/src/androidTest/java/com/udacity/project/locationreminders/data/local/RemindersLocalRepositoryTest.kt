@@ -46,7 +46,7 @@ class RemindersLocalRepositoryTest {
 
     // If we dont use runBlocking we get job not completed yet error
     @Test
-     fun testInsertReminderandGetReminders() = runBlocking{
+    fun reminder_insertAndFetch_returnsReminder() = runBlocking {
         val reminderDto = createFakeReminder()
         repository.saveReminder(reminderDto)
 
@@ -61,21 +61,21 @@ class RemindersLocalRepositoryTest {
         MatcherAssert.assertThat(result.data[0].longitude, Matchers.`is`(reminderDto.longitude))
     }
 
-@Test
-fun testReminderNotFound_returnError() = runBlocking {
-    val result = repository.getReminder("111") is Result.Error
-    MatcherAssert.assertThat(result, CoreMatchers.`is`(true))
-}
+    @Test
+    fun fakeReminder_fetch_returnError() = runBlocking {
+        val result = repository.getReminder("111") is Result.Error
+        MatcherAssert.assertThat(result, CoreMatchers.`is`(true))
+    }
 
 
-fun createFakeReminder(): ReminderDTO {
-    return ReminderDTO(
-        "Fake title",
-        "Fake description abc",
-        "location abc",
-        102.00,
-        109.00
-    )
-}
+    fun createFakeReminder(): ReminderDTO {
+        return ReminderDTO(
+            "Fake title",
+            "Fake description abc",
+            "location abc",
+            102.00,
+            109.00
+        )
+    }
 
 }

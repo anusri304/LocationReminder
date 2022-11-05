@@ -51,10 +51,6 @@ import kotlinx.coroutines.test.runBlockingTest
 
 class ReminderListFragmentTest : AutoCloseKoinTest() {
 
-//    TODO: test the navigation of the fragments.
-//    TODO: test the displayed data on the UI.
-//    TODO: add testing for the error messages.
-
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
 
@@ -114,7 +110,7 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
     }
 
     @Test
-    fun clickAddReminderFABButton_navigateToSaveReminderFragment() {
+    fun addReminderFABButton_click_navigateToSaveReminderFragment() {
 
         //Given on the ReminderListFragment
         val fragmentScenario =
@@ -133,7 +129,7 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
     }
 
     @Test
-    fun launchReminderListFragment_checkDataDisplayed()  {
+    fun reminderListFragment_launch_checkDataDisplayed()  {
         val reminderDto = createFakeReminder()
         runBlocking {
             repository.saveReminder(reminderDto)
@@ -143,16 +139,13 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
             launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(fragmentScenario)
 
-
-
-       // Espresso.onView(withId(R.id.reminderssRecyclerView)).check(matches(atPosition(0, withText("Test Text"))));
-
         onView(withId(R.id.reminderssRecyclerView))
-            .check(matches(RecyclerUtil.atPosition(0, hasDescendant(withText("Fake title")))));
+            .check(matches(hasDescendant(withText("Fake title"))));
+
     }
 
     @Test
-     fun launchReminderListFragment_checkNoDataDisplayed() =  runBlockingTest{
+     fun reminderListFragment_launch_checkNoDataDisplayed() =  runBlockingTest{
         val fragmentScenario =launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(fragmentScenario)
         onView(withText(R.string.no_data))

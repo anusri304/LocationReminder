@@ -45,7 +45,7 @@ class RemindersDaoTest {
 
 
     @Test
-     fun testInsertReminderandGetReminders() = runBlockingTest{
+     fun reminder_insertAndFetch_returnsReminder() = runBlockingTest{
         val reminderDto = createFakeReminder()
        database.reminderDao().saveReminder(reminderDto)
 
