@@ -91,8 +91,7 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
         //clear the data
         runBlocking {
             repository.deleteAllReminders()
-            val reminderDto = createFakeReminder()
-            repository.saveReminder(reminderDto)
+
         }
     }
 
@@ -132,37 +131,38 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
 
     }
 
-    @Test
-    fun launchReminderListFragment_checkDataDisplayed()  {
-        val fragmentScenario =
-            launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-        dataBindingIdlingResource.monitorFragment(fragmentScenario)
+//    @Test
+//    suspend fun launchReminderListFragment_checkDataDisplayed()  {
+//        val reminderDto = createFakeReminder()
+//        repository.saveReminder(reminderDto)
+//        val fragmentScenario =
+//            launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+//        dataBindingIdlingResource.monitorFragment(fragmentScenario)
+//
+//
+//
+//       // Espresso.onView(withId(R.id.reminderssRecyclerView)).check(matches(atPosition(0, withText("Test Text"))));
+//
+//        onView(withId(R.id.reminderssRecyclerView))
+//            .check(matches(RecyclerUtil.atPosition(0, hasDescendant(withText("Fake title")))));
+//    }
 
-
-
-       // Espresso.onView(withId(R.id.reminderssRecyclerView)).check(matches(atPosition(0, withText("Test Text"))));
-
-        onView(withId(R.id.reminderssRecyclerView))
-            .check(matches(RecyclerUtil.atPosition(0, hasDescendant(withText("Fake title")))));
-    }
-
-    @Test
-     fun launchReminderListFragment_checkNoDataDisplayed() = runBlocking {
-        repository.deleteAllReminders()
-        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-
-        Espresso.onView(ViewMatchers.withText(R.string.no_data))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
-    }
-
-    fun createFakeReminder(): ReminderDTO {
-        return ReminderDTO(
-            "Fake title",
-            "Fake description abc",
-            "location abc",
-            102.00,
-            109.00
-        )
-    }
+//    @Test
+//     fun launchReminderListFragment_checkNoDataDisplayed() =  {
+//        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+//
+//        onView(withText(R.string.no_data))
+//            .check(matches(ViewMatchers.isDisplayed()))
+//
+//    }
+//
+//    fun createFakeReminder(): ReminderDTO {
+//        return ReminderDTO(
+//            "Fake title",
+//            "Fake description abc",
+//            "location abc",
+//            102.00,
+//            109.00
+//        )
+//    }
 }
