@@ -44,10 +44,11 @@ import com.udacity.project.locationreminders.data.dto.ReminderDTO
 import com.udacity.project.util.RecyclerUtil
 import kotlinx.coroutines.test.runBlockingTest
 
+@MediumTest
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 //UI Testing
-@MediumTest
+
 class ReminderListFragmentTest : AutoCloseKoinTest() {
 
 //    TODO: test the navigation of the fragments.
@@ -147,15 +148,15 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
 //            .check(matches(RecyclerUtil.atPosition(0, hasDescendant(withText("Fake title")))));
 //    }
 
-//    @Test
-//     fun launchReminderListFragment_checkNoDataDisplayed() =  {
-//        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-//
-//        onView(withText(R.string.no_data))
-//            .check(matches(ViewMatchers.isDisplayed()))
-//
-//    }
-//
+    @Test
+     fun launchReminderListFragment_checkNoDataDisplayed() =  runBlockingTest{
+        val fragmentScenario =launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        dataBindingIdlingResource.monitorFragment(fragmentScenario)
+        onView(withText(R.string.no_data))
+            .check(matches(ViewMatchers.isDisplayed()))
+
+    }
+
 //    fun createFakeReminder(): ReminderDTO {
 //        return ReminderDTO(
 //            "Fake title",
