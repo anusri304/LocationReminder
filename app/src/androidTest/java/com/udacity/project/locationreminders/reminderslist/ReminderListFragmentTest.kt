@@ -132,21 +132,24 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
 
     }
 
-//    @Test
-//    suspend fun launchReminderListFragment_checkDataDisplayed()  {
-//        val reminderDto = createFakeReminder()
-//        repository.saveReminder(reminderDto)
-//        val fragmentScenario =
-//            launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-//        dataBindingIdlingResource.monitorFragment(fragmentScenario)
-//
-//
-//
-//       // Espresso.onView(withId(R.id.reminderssRecyclerView)).check(matches(atPosition(0, withText("Test Text"))));
-//
-//        onView(withId(R.id.reminderssRecyclerView))
-//            .check(matches(RecyclerUtil.atPosition(0, hasDescendant(withText("Fake title")))));
-//    }
+    @Test
+    fun launchReminderListFragment_checkDataDisplayed()  {
+        val reminderDto = createFakeReminder()
+        runBlocking {
+            repository.saveReminder(reminderDto)
+
+        }
+        val fragmentScenario =
+            launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        dataBindingIdlingResource.monitorFragment(fragmentScenario)
+
+
+
+       // Espresso.onView(withId(R.id.reminderssRecyclerView)).check(matches(atPosition(0, withText("Test Text"))));
+
+        onView(withId(R.id.reminderssRecyclerView))
+            .check(matches(RecyclerUtil.atPosition(0, hasDescendant(withText("Fake title")))));
+    }
 
     @Test
      fun launchReminderListFragment_checkNoDataDisplayed() =  runBlockingTest{
@@ -157,13 +160,13 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
 
     }
 
-//    fun createFakeReminder(): ReminderDTO {
-//        return ReminderDTO(
-//            "Fake title",
-//            "Fake description abc",
-//            "location abc",
-//            102.00,
-//            109.00
-//        )
-//    }
+    fun createFakeReminder(): ReminderDTO {
+        return ReminderDTO(
+            "Fake title",
+            "Fake description abc",
+            "location abc",
+            102.00,
+            109.00
+        )
+    }
 }
