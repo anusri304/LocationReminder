@@ -101,7 +101,8 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
         Espresso.onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
-        Espresso.onView(withId(R.id.reminderTitle)).perform(ViewActions.typeText("TITLE1"), ViewActions.closeSoftKeyboard())
+        Espresso.onView(withId(R.id.reminderTitle)).perform(ViewActions.typeText("Fake Title1"), ViewActions.closeSoftKeyboard())
+        Espresso.onView(withId(R.id.reminderDescription)).perform(ViewActions.typeText("Fake Desc 1"), ViewActions.closeSoftKeyboard())
         Espresso.onView(withId(R.id.saveReminder)).perform(ViewActions.click())
 
         val snackBarMessage = appContext.getString(R.string.err_select_location)
