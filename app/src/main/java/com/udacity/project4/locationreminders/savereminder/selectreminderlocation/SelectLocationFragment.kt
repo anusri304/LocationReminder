@@ -11,6 +11,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -67,7 +68,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         binding.saveLocationButton.setOnClickListener {
-            onLocationSelected()
+            if(marker ==null) {
+                Toast.makeText(activity, getString(R.string.select_poi), Toast.LENGTH_LONG).show()
+            }
+            else {
+                onLocationSelected()
+            }
         }
 
         return binding.root
