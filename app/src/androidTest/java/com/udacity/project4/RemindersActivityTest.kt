@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
@@ -38,12 +39,13 @@ import org.koin.test.get
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 //END TO END test to black box test the app
-class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed autoclose @after method to close Koin after every test
+class RemindersActivityTest :
+    AutoCloseKoinTest() {// Extended Koin Test - embed autoclose @after method to close Koin after every test
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
 
-   private val dataBindingIdlingResource = DataBindingIdlingResource()
+    private val dataBindingIdlingResource = DataBindingIdlingResource()
 
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
@@ -100,15 +102,17 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
-        Espresso.onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
-        Espresso.onView(withId(R.id.reminderTitle)).perform(ViewActions.typeText("Fake Title1"), ViewActions.closeSoftKeyboard())
-        Espresso.onView(withId(R.id.reminderDescription)).perform(ViewActions.typeText("Fake Desc 1"), ViewActions.closeSoftKeyboard())
-        Espresso.onView(withId(R.id.saveReminder)).perform(ViewActions.click())
+        onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
+        onView(withId(R.id.reminderTitle))
+            .perform(ViewActions.typeText("Fake Title1"), ViewActions.closeSoftKeyboard())
+        onView(withId(R.id.reminderDescription))
+            .perform(ViewActions.typeText("Fake Desc 1"), ViewActions.closeSoftKeyboard())
+        onView(withId(R.id.saveReminder)).perform(ViewActions.click())
 
         val snackBarMessage = appContext.getString(R.string.err_select_location)
 
 
-        Espresso.onView(ViewMatchers.withText(snackBarMessage))
+        onView(withText(snackBarMessage))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
         activityScenario.close()
@@ -119,22 +123,22 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
-        Espresso.onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
+        onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
 
-        Espresso.onView(withId(R.id.reminderTitle)).perform(ViewActions.replaceText("Fake Title"))
-        Espresso.onView(withId(R.id.reminderDescription)).perform(ViewActions.replaceText("Fake Description"))
-        Espresso.onView(withId(R.id.selectLocation)).perform(ViewActions.click())
+        onView(withId(R.id.reminderTitle)).perform(ViewActions.replaceText("Fake Title"))
+        onView(withId(R.id.reminderDescription)).perform(ViewActions.replaceText("Fake Description"))
+        onView(withId(R.id.selectLocation)).perform(ViewActions.click())
 
-        Espresso.onView(withId(R.id.googleMap)).perform(ViewActions.longClick())
-        Espresso.onView(withId(R.id.saveLocationButton)).perform(ViewActions.click())
+        onView(withId(R.id.googleMap)).perform(ViewActions.longClick())
+        onView(withId(R.id.saveLocationButton)).perform(ViewActions.click())
 
-        Espresso.onView(withId(R.id.saveReminder)).perform(ViewActions.click())
+        onView(withId(R.id.saveReminder)).perform(ViewActions.click())
 
-        Espresso.onView(withText(R.string.reminder_saved)).inRoot(
+        onView(withText(R.string.reminder_saved)).inRoot(
             RootMatchers.withDecorView(
                 CoreMatchers.not(
                     CoreMatchers.`is`(
-                        getActivity(activityScenario).window.decorView
+                        getActivityFromScenario(activityScenario).window.decorView
                     )
                 )
             )
@@ -145,7 +149,7 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
     }
 
     // get activity context
-    private fun getActivity(activityScenario: ActivityScenario<RemindersActivity>): Activity {
+    private fun getActivityFromScenario(activityScenario: ActivityScenario<RemindersActivity>): Activity {
         lateinit var activity: Activity
         activityScenario.onActivity {
             activity = it
