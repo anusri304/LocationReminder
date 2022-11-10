@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -22,7 +24,6 @@ class AuthenticationActivity : AppCompatActivity() {
 
     companion object {
         const val TAG = "LoginFragment"
-        const val SIGN_IN_RESULT_CODE = 1001
     }
 
     private val viewModel by viewModels<LoginViewModel>()
@@ -30,6 +31,12 @@ class AuthenticationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
+
+        val loginButton = findViewById<Button>(R.id.button)
+
+        loginButton.setOnClickListener {
+            launchLoginFlow()
+        }
         observeAuthenticationState()
 
     }
@@ -46,7 +53,10 @@ class AuthenticationActivity : AppCompatActivity() {
         })
     }
 
-    public fun launchLoginFlow(view: View) {
+    /*
+    This method will be invoked when the user clicks the login button
+     */
+    fun launchLoginFlow() {
 
        // Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
         val providers = arrayListOf(
@@ -54,32 +64,28 @@ class AuthenticationActivity : AppCompatActivity() {
             AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
-        startActivityForResult(
-            AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(),
-            SIGN_IN_RESULT_CODE
-        )
+        getResult.launch(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build())
+
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SIGN_IN_RESULT_CODE) {
-            val response = IdpResponse.fromResultIntent(data)
-            if (resultCode == Activity.RESULT_OK) {
-                // Successfully signed in user.
-                Log.i(
-                    TAG,
-                    "Successfully signed in user " +
+    private val getResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) {
+            val response = IdpResponse.fromResultIntent(it.data)
+            if(it.resultCode == Activity.RESULT_OK){
+                Log.i(TAG,"Successfully signed in user " +
                             "${FirebaseAuth.getInstance().currentUser?.displayName}!"
                 )
                 launchRemindersActivity()
-            } else {
+            }
+            else {
                 // Sign in failed. If response is null the user canceled the sign-in flow using
                 // the back button. Otherwise check response.getError().getErrorCode() and handle
                 // the error.
                 Log.i(TAG, "Sign in unsuccessful ${response?.error?.errorCode}")
             }
         }
-    }
+
 
     private fun launchRemindersActivity() {
         val intent = Intent(this, RemindersActivity::class.java)
