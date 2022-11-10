@@ -201,31 +201,4 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             )
         }
     }
-
-
-    // Anandhi check if below is needed
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<kotlin.String>,
-        grantResults: IntArray
-    ) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        Log.d("Select Location Fragment","Invoked onRequestPermissionsResult" )
-
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.isNotEmpty() &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-
-                mMap?.let { enableMyLocation(it) }
-
-            } else {
-                _viewModel.showSnackBarInt.value = R.string.permission_denied_explanation
-            }
-        }
-    }
-
-
 }
