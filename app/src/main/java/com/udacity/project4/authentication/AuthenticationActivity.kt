@@ -64,6 +64,7 @@ class AuthenticationActivity : AppCompatActivity() {
             AuthUI.IdpConfig.GoogleBuilder().build()
         )
 
+//Invoke the signin activity from google
         getResult.launch(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build())
 
     }
