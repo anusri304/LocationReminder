@@ -36,11 +36,14 @@ class RemindersListViewModelTest: AutoCloseKoinTest() {
     }
 
     @Test
-    fun testSnackBar_display_NoReminders () = runBlockingTest  {
+    fun testRemindersWhenRemindersUnAvailable_display_NoReminders () = runBlockingTest  {
+        // Set the datasource to return error
         fakeReminderDataSource.setReturnError(true)
-        saveReminderData()
+
+        // Load reminders
         remindersViewModel.loadReminders()
 
+        // Assert that errors are shown
         MatcherAssert.assertThat(
             remindersViewModel.showSnackBar.value, CoreMatchers.`is`("No Reminders Found")
         )

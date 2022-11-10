@@ -99,9 +99,11 @@ class RemindersActivityTest :
 
     @Test
     fun saveReminderButton_click_displaySelectLocationSnackbarMessage() {
+        //Given the user is in the Reminders Activity
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
+        //When the user clicks add reminder button and fills in title,desc and clicks save reminder
         onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
         onView(withId(R.id.reminderTitle))
             .perform(ViewActions.typeText("Fake Title1"), ViewActions.closeSoftKeyboard())
@@ -111,7 +113,7 @@ class RemindersActivityTest :
 
         val snackBarMessage = appContext.getString(R.string.err_select_location)
 
-
+        //Then a snackbar is displayed warning the user to select a location
         onView(withText(snackBarMessage))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
@@ -120,9 +122,11 @@ class RemindersActivityTest :
 
     @Test
     fun saveReminderButton_click_displayReminderSavedToastMessage() {
+        //Given the user is in the Reminders Activity
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
+        //When the user clicks add reminder button and fills in title,desc,location and clicks save reminder
         onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
 
         onView(withId(R.id.reminderTitle)).perform(ViewActions.replaceText("Fake Title"))
@@ -134,13 +138,10 @@ class RemindersActivityTest :
 
         onView(withId(R.id.saveReminder)).perform(ViewActions.click())
 
+        //Then the reminder saved message id displayed
         onView(withText(R.string.reminder_saved)).inRoot(
             RootMatchers.withDecorView(
-                CoreMatchers.not(
-                    CoreMatchers.`is`(
-                        getActivityFromScenario(activityScenario).window.decorView
-                    )
-                )
+                CoreMatchers.not(CoreMatchers.`is`(getActivityFromScenario(activityScenario).window.decorView))
             )
         )
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))

@@ -8,8 +8,7 @@ import androidx.test.filters.SmallTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.junit.After
 import org.junit.Before
@@ -45,30 +44,33 @@ class RemindersDaoTest {
 
 
     @Test
-     fun reminder_insertAndFetch_returnsReminder() = runBlockingTest{
-        val reminderDto = createFakeReminder()
-       database.reminderDao().saveReminder(reminderDto)
+    fun reminder_insertAndFetch_returnsReminder() = runBlockingTest {
+        // GIVEN - a new reminder is saved in the database
+        val reminderDto = createTestReminder()
+        database.reminderDao().saveReminder(reminderDto)
 
-        val loadedReminderList = database.reminderDao().getReminders()
+        // WHEN  - Reminders are retrieved from database
+        val retrievedReminders = database.reminderDao().getReminders()
 
-        val loadedReminder = loadedReminderList[0]
+        val retrievedReminder = retrievedReminders[0]
 
-        MatcherAssert.assertThat<ReminderDTO>(loadedReminder as ReminderDTO, CoreMatchers.notNullValue())
-        MatcherAssert.assertThat(loadedReminder.id, `is`(reminderDto.id))
-        MatcherAssert.assertThat(loadedReminder.title, `is`(reminderDto.title))
-        MatcherAssert.assertThat(loadedReminder.description, `is`(reminderDto.description))
-        MatcherAssert.assertThat(loadedReminder.latitude, `is`(reminderDto.latitude))
-        MatcherAssert.assertThat(loadedReminder.longitude, `is`(reminderDto.longitude))
-        MatcherAssert.assertThat(loadedReminder.longitude, `is`(reminderDto.longitude))
+        //Then same reminder is returned
+        assertThat(retrievedReminder.id, `is`(reminderDto.id))
+        assertThat(retrievedReminder.title, `is`(reminderDto.title))
+        assertThat(retrievedReminder.description, `is`(reminderDto.description))
+        assertThat(retrievedReminder.latitude, `is`(reminderDto.latitude))
+        assertThat(retrievedReminder.longitude, `is`(reminderDto.longitude))
+        assertThat(retrievedReminder.longitude, `is`(reminderDto.longitude))
     }
 
 
-    fun createFakeReminder():ReminderDTO {
-        return  ReminderDTO(
+    fun createTestReminder(): ReminderDTO {
+        return ReminderDTO(
             "Fake title",
             "Fake description abc",
             "location abc",
             102.00,
-            109.00)
+            109.00
+        )
     }
 }

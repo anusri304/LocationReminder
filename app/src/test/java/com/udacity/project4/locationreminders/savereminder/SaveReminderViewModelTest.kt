@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,7 +43,9 @@ class SaveReminderViewModelTest : AutoCloseKoinTest() {
 
     @Test
     fun getReminder_validate_displayError() = runBlockingTest {
-        val result = saveReminderViewModel.validateEnteredData(createFakeReminderDataItem())
+        // Initialise the viewmodel with incomplete reminder
+        val result = saveReminderViewModel.validateEnteredData(createIncompleteReminderDataItem())
+        //Assert that the validation fails
         MatcherAssert.assertThat(result, CoreMatchers.`is`(false))
     }
 
@@ -52,18 +55,18 @@ class SaveReminderViewModelTest : AutoCloseKoinTest() {
         // Pause dispatcher so we can verify initial values
         mainCoroutineRule.pauseDispatcher()
         // Save Data
-        saveReminderViewModel.saveReminder(createFakeReminderDataItem())
+        saveReminderViewModel.saveReminder(createIncompleteReminderDataItem())
 
         // Show Loading will be true as dispatcher is paused
-        MatcherAssert.assertThat(saveReminderViewModel.showLoading.value, CoreMatchers.`is`(true))
+        assertThat(saveReminderViewModel.showLoading.value, CoreMatchers.`is`(true))
         // Execute pending coroutines actions
         mainCoroutineRule.resumeDispatcher()
 
         // Show Loading will be false as dispatcher is resumed
-        MatcherAssert.assertThat(saveReminderViewModel.showLoading.value, CoreMatchers.`is`(false))
+        assertThat(saveReminderViewModel.showLoading.value, CoreMatchers.`is`(false))
     }
 
-    private fun createFakeReminderDataItem(): ReminderDataItem {
+    private fun createIncompleteReminderDataItem(): ReminderDataItem {
         return ReminderDataItem(
             "",
             "Fake Reminder Description",
@@ -72,6 +75,4 @@ class SaveReminderViewModelTest : AutoCloseKoinTest() {
             109.00
         )
     }
-
-
 }

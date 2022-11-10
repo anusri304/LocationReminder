@@ -6,7 +6,6 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
@@ -35,11 +34,11 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import  com.udacity.project4.R
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import kotlinx.coroutines.test.runBlockingTest
+import org.mockito.Mockito.verify
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
@@ -119,23 +118,26 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
             Navigation.setViewNavController(it.view!!, navController)
         }
         //When clicking on Add FAB Button
-        Espresso.onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
+        onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
         // Then Launch the Save  Reminder Fragment
-        Mockito.verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
+        verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
 
     }
 
     @Test
     fun reminderListFragment_launch_checkDataDisplayed()  {
-        val reminderDto = createFakeReminder()
+        //Given the reminder exist in database
+        val reminderDto = createTestReminder()
         runBlocking {
             repository.saveReminder(reminderDto)
 
         }
+        //When the reminder fragment is launched
         val fragmentScenario =
             launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(fragmentScenario)
 
+        //Then the Recyclerview has a textview with fake title as text
         onView(withId(R.id.reminderssRecyclerView))
             .check(matches(hasDescendant(withText("Fake title"))));
 
@@ -143,14 +145,17 @@ class ReminderListFragmentTest : AutoCloseKoinTest() {
 
     @Test
      fun reminderListFragment_launch_checkNoDataDisplayed() =  runBlockingTest{
+        //Given no data exist in database
+        //When the reminder fragment is launched
         val fragmentScenario =launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(fragmentScenario)
+        //Then No Data is displayed
         onView(withText(R.string.no_data))
             .check(matches(ViewMatchers.isDisplayed()))
 
     }
 
-    fun createFakeReminder(): ReminderDTO {
+    fun createTestReminder(): ReminderDTO {
         return ReminderDTO(
             "Fake title",
             "Fake description abc",
