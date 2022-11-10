@@ -13,65 +13,107 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:orientation="vertical"
         tools:context=".locationreminders.ReminderDescriptionActivity">
 
-        <TextView
-            android:id="@+id/txtView_title_label"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/reminder_title"
-            android:textSize="@dimen/text_size_medium"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtView_title_text"
+            <TextView
+                android:id="@+id/txtView_title_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder_title"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="50dp" />
+
+            <TextView
+                android:id="@+id/txtView_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{reminderDataItem.title}" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{reminderDataItem.title}"
-            android:gravity="center"/>
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtView_description_label"
+            <TextView
+                android:id="@+id/txtView_description_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder_desc"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="50dp"
+                android:layout_height="50dp" />
+
+            <TextView
+                android:id="@+id/txtView_description_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{reminderDataItem.description}" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/reminder_desc"
-            android:textSize="@dimen/text_size_medium"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtView_description_text"
+            <TextView
+                android:id="@+id/txtView_location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder_location"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="50dp" />
+
+            <TextView
+                android:id="@+id/txtView_location_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{reminderDataItem.location}" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@{reminderDataItem.description}" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txtView_location_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/reminder_location"
-            android:textSize="@dimen/text_size_medium"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/txtView_loc_cordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location_coordinates"
+                android:textSize="@dimen/text_size_medium"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/txtView_location_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{reminderDataItem.location}"
-            android:gravity="center"/>
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="50dp" />
 
-        <TextView
-            android:id="@+id/latLong"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@{@string/lat_long_snippet(reminderDataItem.latitude,reminderDataItem.longitude)}"   />
+            <TextView
+                android:id="@+id/latLong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@{@string/lat_long_snippet(reminderDataItem.latitude,reminderDataItem.longitude)}" />
 
 
+        </LinearLayout>
     </LinearLayout>
 </layout>

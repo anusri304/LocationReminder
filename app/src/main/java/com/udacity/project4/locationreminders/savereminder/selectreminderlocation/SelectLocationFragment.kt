@@ -4,6 +4,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -37,7 +38,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     companion object {
         private const val TAG = "SelectLocationFragment"
         private const val INITIAL_ZOOM = 12f
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val REQUEST_LOCATION_PERMISSION = 1
     }
 
     //Use Koin to get the view model of the SaveReminder
@@ -60,7 +61,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         //    add the map setup implementation
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        //https://stackoverflow.com/questions/36618154/android-supportmapfragment-inside-fragment
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.googleMap) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         binding.saveLocationButton.setOnClickListener {
@@ -69,6 +72,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
         return binding.root
     }
+    /*
+     When the user confirms on the selected location,
+      send back the selected location details to the view model
+       and navigate back to the previous fragment to save the reminder and add the geofence
+     */
 
     private fun onLocationSelected() {
         marker?.let {
@@ -109,12 +117,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap?) {
         mMap = googleMap
         //    zoom to the user location after taking his permission
-        var home = LatLng(-29.890790,30.929810)
-
-//        -29.796793039204914
-//
-//        30.839524269104004
-        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(home,INITIAL_ZOOM ))
+        var home = LatLng(-29.890790, 30.929810)
+        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(home, INITIAL_ZOOM))
 
         mMap?.let { setMapLongClick(it) } // Set a long click listener for the map;
 
@@ -127,7 +131,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     }
 
-    //   add style to the map
+    //   add style to the map from the custom xml
     private fun setMapStyle(mMap: GoogleMap?) {
         mMap?.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
@@ -151,14 +155,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 latLng.latitude,
                 latLng.longitude
             )
-           marker= map.addMarker(
+            marker = map.addMarker(
                 MarkerOptions()
                     .position(latLng)
                     .title(getString(R.string.dropped_pin))
                     .snippet(snippet)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             )
-           // marker.showInfoWindow()
+            // marker.showInfoWindow()
         }
     }
 
@@ -193,21 +197,27 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
+                REQUEST_LOCATION_PERMISSION
             )
         }
     }
 
+
+    // Anandhi check if below is needed
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<kotlin.String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode ==LOCATION_PERMISSION_REQUEST_CODE) {
+        Log.d("Select Location Fragment","Invoked onRequestPermissionsResult" )
+
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                grantResults[0] == PackageManager.PERMISSION_GRANTED
+            ) {
 
                 mMap?.let { enableMyLocation(it) }
 
@@ -216,8 +226,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
         }
     }
-
-
 
 
 }

@@ -26,6 +26,7 @@ import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
+import com.udacity.project4.locationreminders.geofence.GeofencingConstants.ACTION_GEOFENCE_EVENT
 import com.udacity.project4.locationreminders.geofence.GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
@@ -44,7 +45,7 @@ class SaveReminderFragment : BaseFragment() {
 
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(requireContext(), GeofenceBroadcastReceiver::class.java)
-        intent.action = GeofenceBroadcastReceiver.ACTION_GEOFENCE_EVENT
+        intent.action = ACTION_GEOFENCE_EVENT
         PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
@@ -99,6 +100,9 @@ class SaveReminderFragment : BaseFragment() {
         }
     }
 
+    /*
+    check if the foreground and background permissions are approved
+     */
     private fun checkPermissionsAndStartGeofencing() {
         if (foregroundAndBackgroundLocationPermissionApproved()) {
             checkDeviceLocationSettingsAndStartGeofence()
@@ -188,9 +192,11 @@ class SaveReminderFragment : BaseFragment() {
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
 
         val settingsClient = LocationServices.getSettingsClient(requireActivity())
+        // Check the location settings to check if it has changed
         val locationSettingsResponseTask =
             settingsClient.checkLocationSettings(builder.build())
 
+         // I case of failure present a dialog to the user
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
                 // Location settings are not satisfied, but this can be fixed
@@ -214,29 +220,41 @@ class SaveReminderFragment : BaseFragment() {
                 }.show()
             }
         }
+        // In case of success add the geofence
         locationSettingsResponseTask.addOnCompleteListener {
             if (it.isSuccessful) {
-                addGeofenceArea()
+                addGeofenceAreaAndSaveReminder()
             }
         }
     }
-    private fun addGeofenceArea() {
+
+    /**
+     * Method to add the geofence and save the reminder to the Room Database
+     */
+
+    private fun addGeofenceAreaAndSaveReminder() {
         val geofence = Geofence.Builder()
+        //Set the reminder ID, string to identify the geofence.
             .setRequestId(reminderDataItem.id)
             .setCircularRegion(
                 reminderDataItem.latitude!!,
                 reminderDataItem.longitude!!,
                 GEOFENCE_RADIUS_IN_METERS
             )
+             // does not expire
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
 
         val geofencingRequest = GeofencingRequest.Builder()
+            // The INITIAL_TRIGGER_ENTER flag indicates that geofencing service should trigger a
+            // GEOFENCE_TRANSITION_ENTER notification when the geofence is added and if the device
+            // is already inside that geofence.
             .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
             .addGeofence(geofence)
             .build()
 
+        // Anandhi check if below is needed
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -244,8 +262,11 @@ class SaveReminderFragment : BaseFragment() {
         ) {
             return
         }
+        // Add a new Geofence Area
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
             addOnSuccessListener {
+                Log.d(TAG,"Successfully added Geofence")
+                // Save the reminder
                 _viewModel.saveReminder(reminderDataItem)
             }
             addOnFailureListener {

@@ -26,11 +26,9 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO + coroutineJob
 
-
-
     companion object {
         private const val JOB_ID = 573
-        private const val TAG = "GeofenceReceiver"
+        private const val TAG = "GeofenceTransitionsJobIntentService"
 
         fun enqueueWork(context: Context, intent: Intent) {
             enqueueWork(
@@ -43,13 +41,8 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
 
     override fun onHandleWork(intent: Intent) {
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
-        if (geofencingEvent.hasError()) {
-            val errorMessage = errorMessage(this@GeofenceTransitionsJobIntentService, geofencingEvent.errorCode)
-            Log.e(TAG, errorMessage)
-            return
-        }
         if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-            Log.v(TAG, this@GeofenceTransitionsJobIntentService.getString(R.string.geofence_entered))
+            Log.v(TAG,this@GeofenceTransitionsJobIntentService.getString(R.string.geofence_entered))
             if (geofencingEvent.triggeringGeofences.isNotEmpty()) {
                 sendNotification(geofencingEvent.triggeringGeofences)
             }

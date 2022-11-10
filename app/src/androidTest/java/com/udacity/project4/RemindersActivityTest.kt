@@ -125,7 +125,7 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         Espresso.onView(withId(R.id.reminderDescription)).perform(ViewActions.replaceText("Fake Description"))
         Espresso.onView(withId(R.id.selectLocation)).perform(ViewActions.click())
 
-        Espresso.onView(withId(R.id.map)).perform(ViewActions.longClick())
+        Espresso.onView(withId(R.id.googleMap)).perform(ViewActions.longClick())
         Espresso.onView(withId(R.id.saveLocationButton)).perform(ViewActions.click())
 
         Espresso.onView(withId(R.id.saveReminder)).perform(ViewActions.click())

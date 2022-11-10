@@ -80,9 +80,10 @@ class ReminderListFragment : BaseFragment() {
         when (item.itemId) {
             R.id.logout -> {
 //                add the logout implementation
+                // Signout of the Firebase authentication which will require the user to signin again
                 AuthUI.getInstance().signOut(requireContext())
-                val logOutIntent = Intent(activity, AuthenticationActivity::class.java)
-                startActivity(logOutIntent)
+                // Start the authentication activity to show the login screen
+                startActivity(Intent(activity, AuthenticationActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)

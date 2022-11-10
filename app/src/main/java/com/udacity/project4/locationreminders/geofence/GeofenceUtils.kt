@@ -26,6 +26,8 @@ import com.udacity.project4.R
 
 internal object GeofencingConstants {
     const val GEOFENCE_RADIUS_IN_METERS = 100f
+    const val ACTION_GEOFENCE_EVENT =
+        "GeofenceUtil.reminders.action.ACTION_GEOFENCE_EVENT"
 }
 fun errorMessage(context: Context, errorCode: Int): String {
     val resources = context.resources
