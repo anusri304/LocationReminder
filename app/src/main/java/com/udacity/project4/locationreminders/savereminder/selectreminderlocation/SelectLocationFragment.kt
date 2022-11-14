@@ -4,11 +4,14 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,6 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
@@ -38,12 +42,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
-import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 import java.lang.String
 import java.util.*
+
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
@@ -280,8 +284,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 map.uiSettings.isMyLocationButtonEnabled = false
                 lastKnownLocation = null
             }
-        }
-        catch(e: SecurityException){
+        } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
         }
     }
@@ -325,26 +328,44 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         permissions: Array<kotlin.String>,
         grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isEmpty() ||
-            grantResults[FOREGROUND_LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
-            (requestCode == REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE &&
-                    grantResults[FOREGROUND_LOCATION_PERMISSION_INDEX] ==
-                    PackageManager.PERMISSION_DENIED)
-        ) {
-
-            Snackbar.make(binding.root,
-                R.string.permission_denied_explanation, Snackbar.LENGTH_LONG)
-                .setAction(R.string.settings) {
-                    requestForegroundLocationPermissions()
-                }.show()
-
-        }
-        else{
+        if (foregroundPermissionApproved()) {
             displayCurrentLocation()
             checkDeviceLocationSettings()
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Snackbar.make(
+                    binding.root,
+                    R.string.permission_denied_explanation, Snackbar.LENGTH_LONG
+                )
+                    .setAction(R.string.settings) {
+                        requestForegroundLocationPermissions()
+                    }.show()
+
+            } else {
+                displayAlertDialog()
+            }
         }
     }
+
+    fun displayAlertDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireActivity())
+
+        alertDialogBuilder.setMessage(R.string.manual_enable_while_use_permission)
+        alertDialogBuilder.setPositiveButton(
+            "OK"
+        ) { arg0, arg1 -> requireActivity().finish() }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    fun launchSettingsIntent() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", requireActivity().packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+
     // Check if the user has accepted the permission. If not prompt again
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

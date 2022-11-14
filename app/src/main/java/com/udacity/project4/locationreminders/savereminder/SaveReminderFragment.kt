@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
@@ -169,23 +170,37 @@ class SaveReminderFragment : BaseFragment() {
         grantResults: IntArray
     ) {
 
-        if (grantResults.isEmpty() ||
-            grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
-            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
-                    grantResults[LOCATION_PERMISSION_INDEX] ==
-                    PackageManager.PERMISSION_DENIED)
-        ) {
+        if (foregroundAndBackgroundLocationPermissionApproved()) {
 
-            Snackbar.make(binding.root,
-                R.string.permission_denied_explanation, Snackbar.LENGTH_LONG)
-                .setAction(R.string.settings) {
-                    requestForegroundAndBackgroundLocationPermissions()
-                }.show()
-
-        } else {
             checkDeviceLocationSettingsAndStartGeofence()
+
+        } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+           // var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                Snackbar.make(
+                    binding.root,
+                    R.string.permission_denied_explanation, Snackbar.LENGTH_LONG
+                ).setAction(R.string.settings) {
+                        requestForegroundAndBackgroundLocationPermissions()
+                    }.show()
+
+            } else {
+                displayAlertDialog()
+            }
         }
     }
+
+    fun displayAlertDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireActivity())
+
+        alertDialogBuilder.setMessage(R.string.manual_enable_all_time_permission)
+        alertDialogBuilder.setPositiveButton(
+            "OK"
+        ) { arg0, arg1 -> requireActivity().finish() }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
 
     private fun checkDeviceLocationSettingsAndStartGeofence(resolve: Boolean = true) {
         val locationRequest = LocationRequest.create().apply {
