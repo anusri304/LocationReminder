@@ -70,9 +70,9 @@ class RemindersLocalRepositoryTest {
     fun fakeReminder_fetch_returnError() = runBlocking {
         // GIVEN - No REminders exist in database
         //When a reminder with id 765 is retrieved
-        val result = repository.getReminder("765") is Result.Error
+        val result = repository.getReminder("765") as Result.Error
         //Then Error is displayed
-        assertThat(result, CoreMatchers.`is`(true))
+      assertThat(result, CoreMatchers.`is`(Result.Error("Reminder not found!")))
     }
 
 

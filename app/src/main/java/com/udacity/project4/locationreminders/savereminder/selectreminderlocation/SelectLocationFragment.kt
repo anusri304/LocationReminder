@@ -154,12 +154,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 ).show()
             }
         }
-//        locationSettingsResponseTask.addOnCompleteListener {
-//            if (it.isSuccessful) {
-//                Log.d("Anandhi","Anandhi Called addOnCompleteListener")
-//                mMap?.let { it1 -> showMyLocation(it1) }
-//            }
-//        }
+        locationSettingsResponseTask.addOnCompleteListener {
+            if (it.isSuccessful) {
+                mMap?.let { it1 -> showMyLocation(it1) }
+            }
+        }
     }
 
     @TargetApi(29)
@@ -212,7 +211,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
-        Log.d("Anandhi", "Anandhi Called onMapReady")
         mMap = googleMap
 
         mMap?.let { setMapLongClick(it) } // Set a long click listener for the map;
@@ -286,7 +284,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun showMyLocation(map: GoogleMap) {
         try {
             if (foregroundPermissionApproved()) {
-                Log.d("Anandhi", "am called")
                 map.isMyLocationEnabled = true
                 displayCurrentLocation()
             }
@@ -299,7 +296,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun displayCurrentLocation() {
         try {
             if (foregroundPermissionApproved()) {
-                Toast.makeText(requireContext(), R.string.select_poi, Toast.LENGTH_LONG).show()
                 val lastLocationResult = fusedLocationProviderClient.lastLocation
                 lastLocationResult.addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
